@@ -15,8 +15,8 @@ import urllib.parse
 import urllib.request
 import urllib.error
 
-CONFIG_PATH = os.path.expanduser("~/.config/ghuploader/config.json")
-DATA_DIR = os.path.expanduser("~/.config/ghuploader/data")
+CONFIG_PATH = os.path.expanduser("~/.config/gupload/config.json")
+DATA_DIR = os.path.expanduser("~/.config/gupload/data")
 RECENT_FILE = os.path.join(DATA_DIR, "recent.json")
 
 AUDIO_EXT = {".mp3",".m4a",".aac",".wav",".flac",".ogg",".opus",".aiff",".alac",".wma"}
@@ -119,7 +119,7 @@ def api_request(method, url, token, data=None, headers=None):
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {token}",
         "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "ghuploader",
+        "User-Agent": "gupload",
     }
     if headers:
         h.update(headers)
@@ -736,9 +736,7 @@ def upload_contents_api(cfg, token, local_path, remote_path, category):
         blob = f.read()
     b64 = base64.b64encode(blob).decode("ascii")
 
-    # Date in commit message (not in folder name)
-    now = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    msg = f"Upload ({category}) {os.path.basename(local_path)} @ {now}"
+    msg = f"{category} ⋅ {os.path.basename(local_path)}"
 
     payload = {"message": msg, "content": b64, "branch": branch}
     resp = api_request("PUT", url, token, data=payload)

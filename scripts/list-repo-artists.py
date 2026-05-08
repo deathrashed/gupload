@@ -3,12 +3,12 @@
 import sys
 import json
 import os
-# Add repo root to path to import ghuploader
+# Add repo root to path to import gupload
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 REPO_ROOT = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, REPO_ROOT)
 
-from ghuploader import load_config, get_token, api_request
+from gupload import load_config, get_token, api_request
 
 def list_artists():
     """List all artists in the Audio directory of the repo"""
