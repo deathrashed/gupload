@@ -20,12 +20,12 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 GHU="$REPO_ROOT/ghu"
-PYTHON_SCRIPT="$REPO_ROOT/scripts/ghuploader.py"
+PYTHON_SCRIPT="$REPO_ROOT/scripts/gupload.py"
 LIST_ARTISTS_SCRIPT="$SCRIPT_DIR/list-repo-artists.py"
 UPLOAD_ASSETS_SCRIPT="$SCRIPT_DIR/upload-artist-assets.sh"
 LOG="/tmp/gupload.log"
-CONFIG="$HOME/.config/ghuploader/config.json"
-DATA_DIR="$HOME/.config/ghuploader/data"
+CONFIG="$HOME/.config/gupload/config.json"
+DATA_DIR="$HOME/.config/gupload/data"
 FAVORITES_FILE="$DATA_DIR/favorites.json"
 RECENT_FILE="$DATA_DIR/recent.json"
 
@@ -49,7 +49,7 @@ if [[ ! -x "$GHU" ]]; then
     fi
     # Update script paths based on resolved REPO_ROOT
     if [[ -n "$REPO_ROOT" ]] && [[ -d "$REPO_ROOT" ]]; then
-        PYTHON_SCRIPT="$REPO_ROOT/scripts/ghuploader.py"
+        PYTHON_SCRIPT="$REPO_ROOT/scripts/gupload.py"
         LIST_ARTISTS_SCRIPT="$REPO_ROOT/scripts/list-repo-artists.py"
         UPLOAD_ASSETS_SCRIPT="$REPO_ROOT/scripts/upload-artist-assets.sh"
     fi
