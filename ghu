@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PY="/Volumes/Eksternal/Projects/Gupload/scripts/gupload.py"
+PY="/Volumes/Eksternal/Projects/Gupload/scripts/ghuploader.py"
 PYBIN="/usr/bin/python3"
 OSAS="/usr/bin/osascript"
 SEC="/usr/bin/security"

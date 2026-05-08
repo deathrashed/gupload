@@ -11,7 +11,7 @@ Gupload/
 │   └── .gitignore               # Git ignore rules
 │
 ├── scripts/                      # All scripts
-│   ├── gupload.py            # Core Python upload logic
+│   ├── ghuploader.py            # Core Python upload logic
 │   ├── gupload-menu.sh          # Interactive menu tool
 │   ├── upload-artist-assets.sh  # Batch upload artist assets
 │   └── list-repo-artists.py     # List artists from GitHub repo
@@ -53,7 +53,7 @@ Gupload/
 - **ghu** - Bash wrapper for macOS integration, handles token retrieval and Finder selection
 
 ### Scripts (scripts/)
-- **gupload.py** - Main upload logic, GitHub API interaction, file naming, categorization
+- **ghuploader.py** - Main upload logic, GitHub API interaction, file naming, categorization
 - **gupload-menu.sh** - Full-featured interactive menu with fzf search, repo browsing, custom naming
 - **upload-artist-assets.sh** - Batch upload script for artist assets (covers, logos, artist images)
 - **list-repo-artists.py** - Helper script to query GitHub API and list artists already in repo

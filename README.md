@@ -18,8 +18,8 @@ chmod +x ghu scripts/*.sh
 gh auth login
 
 # 4. Configure (edit with your GitHub username and repo)
-mkdir -p ~/.config/gupload
-cp data/config.example.json ~/.config/gupload/config.json
+mkdir -p ~/.config/ghuploader
+cp data/config.example.json ~/.config/ghuploader/config.json
 # Edit config.json with your settings
 
 # 5. Upload a file
@@ -58,7 +58,7 @@ cp data/config.example.json ~/.config/gupload/config.json
 - ⭐ **Favorites System** - Quick access to frequently-used paths
 - 📈 **Upload Statistics** - Track and analyze upload patterns
 
-Advanced tools live in `scripts/gupload-menu.sh` and store local workflow data under `~/.config/gupload/data/`.
+See [ADVANCED_FEATURES.md](ADVANCED_FEATURES.md) for complete guide.
 
 ## Table of Contents
 
@@ -110,8 +110,8 @@ Advanced tools live in `scripts/gupload-menu.sh` and store local workflow data u
 
 4. **Configure:**
    ```bash
-   mkdir -p ~/.config/gupload
-   cp data/config.example.json ~/.config/gupload/config.json
+   mkdir -p ~/.config/ghuploader
+   cp data/config.example.json ~/.config/ghuploader/config.json
    # Edit config.json with your settings (see Configuration section)
    ```
 
@@ -120,7 +120,7 @@ Advanced tools live in `scripts/gupload-menu.sh` and store local workflow data u
 <details>
 <summary><strong>⚙️ Configuration</strong> (Click to expand)</summary>
 
-Edit `~/.config/gupload/config.json` with your settings:
+Edit `~/.config/ghuploader/config.json` with your settings:
 
 ```json
 {
@@ -333,7 +333,6 @@ Uploads/
 
 - **Small files (<95MB)**: Uploaded via GitHub Contents API → stored directly in repository
 - **Large files (95MB-2GB)**: Uploaded via GitHub Releases API → attached to release (default tag: `gupload-uploads`)
-- **Commit messages**: Contents API uploads use `Category ⋅ filename`, for example `Images ⋅ mediafire-icon.png`
 
 ### Output Formats
 
@@ -361,7 +360,6 @@ Output is automatically copied to clipboard (macOS).
 
 All utility scripts are located in `scripts/`:
 
-- **`gupload.py`** - Core Python uploader for categorization, naming, GitHub API calls, and output formatting
 - **`gupload-menu.sh`** - Interactive menu for all upload operations
 - **`upload-artist-assets.sh`** - Batch upload artist assets (covers, logos, artist images)
 - **`list-repo-artists.py`** - List artists already in the repository (used by menu)
@@ -502,31 +500,30 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ```
 Gupload/
 ├── ghu                      # Main wrapper script (macOS integration)
-├── CLAUDE.md                # AI-assisted development handoff
 │
 ├── scripts/                 # All scripts
-│   ├── gupload.py           # Core Python upload logic
+│   ├── ghuploader.py        # Core Python upload logic
 │   ├── gupload-menu.sh      # Interactive menu tool
-│   ├── upload-cover.sh      # Album-cover upload helper
 │   ├── upload-artist-assets.sh  # Batch upload artist assets
 │   └── list-repo-artists.py     # List artists from repo
 │
-├── data/                    # Assets, config template, and documentation
+├── data/                    # Data and documentation
 │   ├── config.example.json  # Example configuration file
-│   ├── assets/              # Icon and project assets
 │   ├── docs/                # Documentation files
 │   └── logs/                # Log files (if using local logging)
 │
-└── Uploads/                 # Remote upload tree when cloned locally; git ignored
+└── Uploads/                 # All uploads go here (git ignored, personal files)
     └── [category]/          # Category folders (Audio, Images, Scripts, etc.)
 ```
 
 ## Additional Documentation
 
+- 📖 **[ADVANCED_FEATURES.md](ADVANCED_FEATURES.md)** - Complete guide to all advanced features (batch upload, templates, search, export, etc.)
+- 📋 **[QUICK_REFERENCE.md](QUICK_REFERENCE.md)** - Fast reference for common tasks and workflows
+- 📝 **[MENU_IMPROVEMENTS.md](MENU_IMPROVEMENTS.md)** - Detailed changelog of menu system improvements
 - 📚 **`data/docs/USAGE.md`** - Detailed usage guide
 - 🏗️ **`data/docs/STRUCTURE.md`** - Repository structure documentation
-- 🔧 **`CLAUDE.md`** - Canonical AI-assisted development handoff
-- 🔧 **`data/docs/CLAUDE.md`** - Scoped documentation supplement that points back to the root handoff
+- 🔧 **`CLAUDE.md`** - Development documentation
 
 </details>
 

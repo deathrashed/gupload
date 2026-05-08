@@ -7,7 +7,7 @@ __pycache__/
 
 # Config (contains secrets)
 config.json
-~/.config/gupload/config.json
+~/.config/ghuploader/config.json
 *.log
 
 # Sensitive data
