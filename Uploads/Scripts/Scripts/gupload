@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PY="/Volumes/Eksternal/Projects/Gupload/scripts/gupload.py"
+PYBIN="/usr/bin/python3"
+OSAS="/usr/bin/osascript"
+SEC="/usr/bin/security"
+GHCLI="/opt/homebrew/bin/gh"
+LOG="/tmp/gupload.log"
+
+# Pull token from env if present; otherwise prefer gh CLI, then Keychain
+if [[ -z "${GITHUB_TOKEN:-}" && -z "${GH_TOKEN:-}" ]]; then
+  # Try gh CLI first (usually more reliable) - use full path for Automator compatibility
+  if [[ -x "$GHCLI" ]]; then
+    tok="$("$GHCLI" auth token 2>/dev/null || true)"
+    if [[ -n "$tok" ]]; then
+      export GITHUB_TOKEN="$tok"
+    fi
+  fi
+  
+  # Fallback to Keychain if gh CLI token not available
+  if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+    tok="$("$SEC" find-generic-password -s "GuploadGitHubToken" -w 2>/dev/null || true)"
+    if [[ -n "$tok" ]]; then
+      export GITHUB_TOKEN="$tok"
+    fi
+  fi
+fi
+
+{
+  echo "---- $(date) ----"
+  echo "whoami: $(whoami)"
+  echo "pwd: $(pwd)"
+  echo "PATH: $PATH"
+  echo "args: $#"
+  echo "token_present: $([[ -n "${GITHUB_TOKEN:-}" || -n "${GH_TOKEN:-}" ]] && echo yes || echo no)"
+} >> "$LOG"
+
+# Collect paths (args -> stdin -> Finder selection)
+paths=()
+
+if [[ $# -gt 0 ]]; then
+  for a in "$@"; do [[ -n "$a" ]] && paths+=("$a"); done
+else
+  if [[ ! -t 0 ]]; then
+    while IFS= read -r line; do [[ -n "$line" ]] && paths+=("$line"); done
+  fi
+fi
+
+# Normalize file:// URLs
+norm=()
+for p in "${paths[@]}"; do
+  if [[ "$p" == file://* ]]; then
+    p="$("$PYBIN" - <<PY
+import sys, urllib.parse
+u=sys.argv[1]
+print(urllib.parse.unquote(u.replace("file://","",1)))
+PY
+"$p")"
+  fi
+  norm+=("$p")
+done
+paths=("${norm[@]}")
+
+# Finder selection fallback
+if [[ ${#paths[@]} -eq 0 ]]; then
+  sel="$("$OSAS" <<'APPLESCRIPT' 2>>/tmp/gupload.log || true
+tell application "Finder"
+  set theItems to selection
+  if theItems is {} then return ""
+  set out to {}
+  repeat with anItem in theItems
+    set end of out to (POSIX path of (anItem as alias))
+  end repeat
+end tell
+set AppleScript's text item delimiters to return
+set s to out as string
+set AppleScript's text item delimiters to ""
+return s
+APPLESCRIPT
+)"
+  if [[ -n "$sel" ]]; then
+    while IFS= read -r line; do [[ -n "$line" ]] && paths+=("$line"); done <<< "$sel"
+  fi
+fi
+
+if [[ ${#paths[@]} -eq 0 ]]; then
+  echo "Gupload: no files received." >> "$LOG"
+  echo "Gupload: no files received." >&2
+  exit 2
+fi
+
+"$PYBIN" "$PY" "${paths[@]}" >> "$LOG" 2>&1
