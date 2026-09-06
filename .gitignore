@@ -21,6 +21,10 @@ config.json
 .AppleDouble
 .LSOverride
 
+# macOS custom folder icon files
+/Icon
+/Icon?
+
 # IDE
 .vscode/
 .idea/
@@ -44,6 +48,8 @@ data/logs/*.log
 Uploads/
 uploads/
 
-
+.claude-flow/
+.codegraph/
 .cursorignore
 .cursorindexingignore
+ruvector.db
