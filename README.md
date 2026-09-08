@@ -7,8 +7,9 @@
 
   <p>
     <img src="https://img.shields.io/badge/platform-macOS-622284?style=for-the-badge&logo=apple&logoColor=white" alt="macOS">
-    <img src="https://img.shields.io/badge/runtime-Python%203-622284?style=for-the-badge&logo=python&logoColor=white " alt="Python 3">
-    <img src="https://img.shields.io/badge/transport-GitHub%20API-622284?style=for-the-badge&logo=github&logoColor=white" alt="GitHub API">
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/runtime-Python%203-622284?style=for-the-badge&logo=python&logoColor=white " alt="Python 3">
+  <a href="https://docs.github.com/en/rest"><img src="https://img.shields.io/badge/transport-GitHub%20API-622284?style=for-the-badge&logo=github&logoColor=white" alt="GitHub API">
+  <a href="https://www.wtfpl.net/"><img src="https://custom-icon-badges.demolab.com/badge/Licence-wtfpl-622284?style=for-the-badge&logo=wtfpl-logo-white&logoColor=white" alt="WTFPL 2 License"></a>
   </p>
 
   <p>
@@ -214,12 +215,14 @@ Before considering the reorganization complete, verify that:
 - [`src/docs/STRUCTURE.md`](src/docs/STRUCTURE.md) — repository layout
 - [`src/docs/CLAUDE.md`](src/docs/CLAUDE.md) — scoped development handoff
 
-## <img src="uploads/icons/wtfpl/wtfpl-logo-white.svg" height="22"> License
+## <a href="https://www.wtfpl.net/"><img src="https://deathrashed.short.gy/t8mwFF" height="20"></a> License
 
 <div align="center">
-  <a href="LICENSE"><strong>𝗗𝗢 𝗪𝗛𝗔𝗧 𝗧𝗛𝗘 𝗙𝗨𝗖𝗞 𝗬𝗢𝗨 𝗪𝗔𝗡𝗧 𝗧𝗢 𝗣𝗨𝗕𝗟𝗜𝗖 𝗟𝗜𝗖𝗘𝗡𝗦𝗘 𝗩𝟮</strong></a>
-<br>
-  <img src="uploads/icons/wtfpl/wtfpl-badge.svg" alt="WTFPL badge" width="150">
 
-  <p><strong>𝗖𝗢𝗣𝗬𝗥𝗜𝗚𝗛𝗧 © 𝟮𝟬𝟮𝟲 𝗗𝗘𝗔𝗧𝗛𝗥𝗔𝗦𝗛𝗘𝗗.</strong></p>
+[**𝗗𝗢 𝗪𝗛𝗔𝗧 𝗧𝗛𝗘 𝗙𝗨𝗖𝗞 𝗬𝗢𝗨 𝗪𝗔𝗡𝗧 𝗧𝗢 𝗣𝗨𝗕𝗟𝗜𝗖 𝗟𝗜𝗖𝗘𝗡𝗦𝗘**](https://www.wtfpl.net/)
+
+<a href="https://deathrashed.short.gy/wEOeRM"><img src="https://deathrashed.short.gy/mkqomG" alt="WTFPL Badge" width="180"></a>
+
+**𝗖𝗢𝗣𝗬𝗥𝗜𝗚𝗛𝗧 © 𝟮𝟬𝟮𝟲 𝗗𝗘𝗔𝗧𝗛𝗥𝗔𝗦𝗛𝗘𝗗**
+
 </div>
