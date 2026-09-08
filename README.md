@@ -214,6 +214,12 @@ Before considering the reorganization complete, verify that:
 - [`src/docs/STRUCTURE.md`](src/docs/STRUCTURE.md) — repository layout
 - [`src/docs/CLAUDE.md`](src/docs/CLAUDE.md) — scoped development handoff
 
-## <img src="https://api.iconify.design/mdi:license.svg?color=%23b030f0" height="22"> License
+## <img src="uploads/icons/wtfpl/wtfpl-logo-white.svg" height="22"> License
 
-This project uses the [Do What The Fuck You Want To Public License v2](LICENSE), copyright © 2026 deathrashed.
+<div align="center">
+  <a href="LICENSE"><strong>𝗗𝗢 𝗪𝗛𝗔𝗧 𝗧𝗛𝗘 𝗙𝗨𝗖𝗞 𝗬𝗢𝗨 𝗪𝗔𝗡𝗧 𝗧𝗢 𝗣𝗨𝗕𝗟𝗜𝗖 𝗟𝗜𝗖𝗘𝗡𝗦𝗘 𝗩𝟮</strong></a>
+<br>
+  <img src="uploads/icons/wtfpl/wtfpl-badge.svg" alt="WTFPL badge" width="150">
+
+  <p><strong>𝗖𝗢𝗣𝗬𝗥𝗜𝗚𝗛𝗧 © 𝟮𝟬𝟮𝟲 𝗗𝗘𝗔𝗧𝗛𝗥𝗔𝗦𝗛𝗘𝗗.</strong></p>
+</div>
