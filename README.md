@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/badge/platform-macOS-622284?style=for-the-badge&logo=apple&logoColor=white" alt="macOS">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/runtime-Python%203-622284?style=for-the-badge&logo=python&logoColor=white " alt="Python 3">
   <a href="https://docs.github.com/en/rest"><img src="https://img.shields.io/badge/transport-GitHub%20API-622284?style=for-the-badge&logo=github&logoColor=white" alt="GitHub API">
-  <a href="https://www.wtfpl.net/"><img src="https://custom-icon-badges.demolab.com/badge/Licence-wtfpl-622284?style=for-the-badge&logo=wtfpl-logo-white&logoColor=white" alt="WTFPL 2 License"></a>
+  <a href="https://deathrashed.short.gy/wEOeRM"><img src="https://custom-icon-badges.demolab.com/badge/Licence-wtfpl-622284?style=for-the-badge&logo=wtfpl-logo-white&logoColor=white" alt="WTFPL 2 License"></a>
   </p>
 
   <p>
