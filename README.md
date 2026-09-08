@@ -1,14 +1,14 @@
 <div align="center">
-  <img src="src/data/assets/folder.png" alt="Gupload folder icon" width="150">
+  <img src="src/data/assets/folder/folder.png" alt="Gupload folder icon" width="150">
 
   <h1>GU·UPLOAD</h1>
 
   <p><strong>A macOS-first GitHub uploader for turning files, links, and Finder selections into clean, shareable repository assets.</strong></p>
 
   <p>
-    <img src="https://img.shields.io/badge/platform-macOS-1e1e1e?style=for-the-badge&logo=apple&logoColor=b030f0" alt="macOS">
-    <img src="https://img.shields.io/badge/runtime-Python%203-1e1e1e?style=for-the-badge&logo=python&logoColor=b030f0" alt="Python 3">
-    <img src="https://img.shields.io/badge/transport-GitHub%20API-1e1e1e?style=for-the-badge&logo=github&logoColor=b030f0" alt="GitHub API">
+    <img src="https://img.shields.io/badge/platform-macOS-622284?style=for-the-badge&logo=apple&logoColor=white" alt="macOS">
+    <img src="https://img.shields.io/badge/runtime-Python%203-622284?style=for-the-badge&logo=python&logoColor=white " alt="Python 3">
+    <img src="https://img.shields.io/badge/transport-GitHub%20API-622284?style=for-the-badge&logo=github&logoColor=white" alt="GitHub API">
   </p>
 
   <p>
