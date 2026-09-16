@@ -291,6 +291,74 @@ def log_upload(filepath, filename, url, category):
         # Don't fail upload if logging fails
         pass
 
+def sanitize_repo_path(raw: str) -> str:
+    """Sanitize a user-supplied repo-relative folder path for --path.
+
+    Strips surrounding whitespace/slashes, collapses repeated slashes,
+    and drops any '..' / '.' segments (no parent traversal, no absolute
+    escape). Raises ValueError if nothing usable remains.
+    """
+    raw = raw.strip().strip("/")
+    parts = [p for p in raw.split("/") if p not in ("", ".", "..")]
+    cleaned = "/".join(parts)
+    if not cleaned:
+        raise ValueError("Empty or invalid path after sanitization.")
+    return cleaned
+
+
+def build_jsdelivr_url(owner: str, repo: str, branch: str, remote_path: str) -> str:
+    """Build a jsdelivr CDN URL for a file tracked via the contents API.
+
+    Not valid for release assets (jsdelivr has no equivalent for those).
+    """
+    path = remote_path.lstrip("/")
+    return f"https://cdn.jsdelivr.net/gh/{owner}/{repo}@{branch}/{path}"
+
+
+def commit_message_for(category: str, filename: str) -> str:
+    return f"{category.lower()} ⋅ {filename}"
+
+
+def release_prefix_for(category: str, root: str) -> str:
+    return f"{category.lower()}-{root}"
+
+
+def render_formats(formats, filename, url, is_image, is_audio, jsdelivr_url=None):
+    """Render a list of output format keys into display lines.
+
+    Returns (lines, warnings). Unknown/unavailable formats (e.g.
+    'jsdelivr' with no jsdelivr_url) are skipped and produce a warning
+    instead of raising, so a multi-file/multi-format run doesn't abort.
+    """
+    lines = []
+    warnings = []
+    for fmt in formats:
+        if fmt == "mdlink":
+            lines.append(f"[{filename}]({url})")
+        elif fmt == "mdimage":
+            lines.append(f"![{filename}]({url})")
+        elif fmt == "literal":
+            lines.append(url)
+        elif fmt == "html":
+            if is_image:
+                lines.append(f'<img src="{url}">')
+            elif is_audio:
+                lines.append(f'<audio controls src="{url}"></audio>')
+            else:
+                lines.append(f'<a href="{url}">{filename}</a>')
+        elif fmt == "jsdelivr":
+            if jsdelivr_url:
+                lines.append(jsdelivr_url)
+            else:
+                warnings.append(
+                    f"jsdelivr format unavailable for {filename} "
+                    "(release assets have no jsdelivr equivalent) - skipped"
+                )
+        else:
+            warnings.append(f"Unknown format '{fmt}' - skipped")
+    return lines, warnings
+
+
 def category_for_path(path: str) -> str:
     ext = os.path.splitext(path)[1].lower()
     if ext in AUDIO_EXT: return "Audio"
@@ -306,8 +374,12 @@ def category_for_path(path: str) -> str:
     if mt.startswith("audio/"): return "Audio"
     if mt.startswith("image/"): return "Images"
     if mt.startswith("video/"): return "Video"
-    # Check for script-like files by shebang or executable bit
-    if not ext:  # No extension, might be a script
+    # Extensionless files: try a real content sniff (python-magic) before
+    # falling back to the plain shebang check.
+    if not ext:
+        magic_cat = category_from_magic(path)
+        if magic_cat:
+            return magic_cat
         try:
             with open(path, "rb") as f:
                 first_bytes = f.read(2)
@@ -317,6 +389,29 @@ def category_for_path(path: str) -> str:
         except Exception:
             pass
     return "Other"
+
+
+def category_from_magic(path: str):
+    """Best-effort content-based category for an extensionless file,
+    using python-magic/libmagic. Returns None if the library isn't
+    available or the MIME type doesn't map to a known category (caller
+    falls back to the shebang check either way).
+    """
+    try:
+        import magic
+    except ImportError:
+        return None
+    try:
+        mt = magic.from_file(path, mime=True) or ""
+    except Exception:
+        return None
+    if mt.startswith("audio/"): return "Audio"
+    if mt.startswith("image/"): return "Images"
+    if mt.startswith("video/"): return "Video"
+    if mt == "text/x-shellscript" or mt == "text/x-script.python": return "Scripts"
+    if mt.startswith("text/"): return "Documents"
+    if mt in ("application/zip", "application/x-tar", "application/gzip"): return "Archives"
+    return None
 
 def extract_audio_metadata(path: str):
     """Extract artist and title from audio file metadata. Returns (artist, title) or (None, None)."""
@@ -519,12 +614,13 @@ def check_file_exists_remote(cfg, token, remote_path):
     except Exception:
         return False  # File doesn't exist or other error
 
-def build_repo_path(cfg, local_path, token=None, custom_name=None):
+def build_repo_path(cfg, local_path, token=None, custom_name=None, override_path=None):
     base = cfg.get("repo_path_prefix", "")
-    # Always use Uploads/ as the root folder for uploads (allows users to clone without uploads)
-    uploads_root = "Uploads"
+    # Always use lowercase uploads/ as the root folder for uploads.
+    uploads_root = "uploads"
     cat = category_for_path(local_path)
-    
+    remote_cat = override_path if override_path else cat.lower()
+
     # If custom name provided, use it directly (with proper extension)
     if custom_name:
         # Preserve original extension if custom_name doesn't have one
@@ -535,9 +631,9 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
         fname = sanitize_filename(custom_name, preserve_spaces=True)
         # Build path with custom name
         if base:
-            return f"{base}/{uploads_root}/{cat}/{fname}", cat
+            return f"{base}/{uploads_root}/{remote_cat}/{fname}", cat
         else:
-            return f"{uploads_root}/{cat}/{fname}", cat
+            return f"{uploads_root}/{remote_cat}/{fname}", cat
 
     # Get original filename before sanitization (needed for audio track number removal)
     original_basename = os.path.basename(local_path)
@@ -562,7 +658,7 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
                 fname = f"{artist_clean} - {album_clean}{ext}"
             elif artist:
                 # Fallback to just artist if no album found
-                use_spaced_format = cfg.get("generic_name_spaced_format", False)
+                use_spaced_format = cfg.get("generic_name_spaced_format", True)
                 if use_spaced_format:
                     artist_clean = artist.strip()
                     fname = f"{artist_clean} cover{ext}"
@@ -572,7 +668,7 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
                         fname = f"{artist_clean}-cover{ext}"
         elif artist:
             # For logos and artist images
-            use_spaced_format = cfg.get("generic_name_spaced_format", False)
+            use_spaced_format = cfg.get("generic_name_spaced_format", True)
             if use_spaced_format:
                 # "Artist Name filename.ext" format (with spaces, capitalized)
                 artist_clean = artist.strip()
@@ -633,9 +729,9 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
     elif dedup == "sequential" and token:
         # Check remote and append number if exists
         root, ext = os.path.splitext(fname)
-        # Use Uploads/ as root for path checks
-        uploads_root = "Uploads"
-        base_path = f"{base}/{uploads_root}/{cat}" if base else f"{uploads_root}/{cat}"
+        # Use lowercase uploads/ as root for path checks
+        uploads_root = "uploads"
+        base_path = f"{base}/{uploads_root}/{remote_cat}" if base else f"{uploads_root}/{remote_cat}"
 
         # Check if base filename exists
         test_path = f"{base_path}/{fname}"
@@ -665,13 +761,21 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
                 artist_name = extract_artist_from_path(local_path)
     
     # Build path with optional base prefix and organization
-    # All uploads go under Uploads/ folder
-    if organize_by_artist and artist_name:
-        # Everything goes into Uploads/Audio/{Artist}/ folder
+    # All uploads go under lowercase uploads/ folder
+    if override_path:
+        # Manual folder override: skip all auto category/subfolder logic,
+        # place the (already filename-processed) file directly under it.
         if base:
-            return f"{base}/{uploads_root}/Audio/{artist_name}/{fname}", cat
+            return f"{base}/{uploads_root}/{remote_cat}/{fname}", cat
         else:
-            return f"{uploads_root}/Audio/{artist_name}/{fname}", cat
+            return f"{uploads_root}/{remote_cat}/{fname}", cat
+
+    if organize_by_artist and artist_name:
+        # Everything goes into uploads/Audio/{Artist}/ folder
+        if base:
+            return f"{base}/{uploads_root}/audio/{artist_name}/{fname}", cat
+        else:
+            return f"{uploads_root}/audio/{artist_name}/{fname}", cat
     elif cat == "Scripts":
         # Handle script language subfolders and package structures
         ext = os.path.splitext(local_path)[1].lower()
@@ -681,7 +785,7 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
         is_package, package_root, rel_path = detect_package_structure(local_path)
         
         if is_package and package_root and rel_path:
-            # Preserve package structure under Uploads/Scripts/{Language}/package-name/...
+        # Preserve package structure under uploads/Scripts/{Language}/package-name/...
             package_name = sanitize_filename(os.path.basename(package_root))
             # Convert relative path to use sanitized filenames but preserve structure
             rel_parts = rel_path.split(os.sep)
@@ -689,15 +793,15 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
             package_path = "/".join(sanitized_parts)
             
             if base:
-                return f"{base}/{uploads_root}/{cat}/{language_folder}/{package_name}/{package_path}", cat
+                return f"{base}/{uploads_root}/{remote_cat}/{language_folder}/{package_name}/{package_path}", cat
             else:
-                return f"{uploads_root}/{cat}/{language_folder}/{package_name}/{package_path}", cat
+                return f"{uploads_root}/{remote_cat}/{language_folder}/{package_name}/{package_path}", cat
         else:
             # Standalone script, just use language subfolder
             if base:
-                return f"{base}/{uploads_root}/{cat}/{language_folder}/{fname}", cat
+                return f"{base}/{uploads_root}/{remote_cat}/{language_folder}/{fname}", cat
             else:
-                return f"{uploads_root}/{cat}/{language_folder}/{fname}", cat
+                return f"{uploads_root}/{remote_cat}/{language_folder}/{fname}", cat
     elif cat == "Images" and cfg.get("use_image_subfolders", True):
         # Original image subfolder organization (Covers, Logos, Artists)
         image_type = get_image_type(original_basename)
@@ -710,15 +814,15 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None):
             subfolder = subfolder_map.get(image_type)
             if subfolder:
                 if base:
-                    return f"{base}/{uploads_root}/{cat}/{subfolder}/{fname}", cat
+                    return f"{base}/{uploads_root}/{remote_cat}/{subfolder}/{fname}", cat
                 else:
-                    return f"{uploads_root}/{cat}/{subfolder}/{fname}", cat
+                    return f"{uploads_root}/{remote_cat}/{subfolder}/{fname}", cat
     
-    # Standard path building - all under Uploads/
+    # Standard path building - all under uploads/
     if base:
-        return f"{base}/{uploads_root}/{cat}/{fname}", cat
+        return f"{base}/{uploads_root}/{remote_cat}/{fname}", cat
     else:
-        return f"{uploads_root}/{cat}/{fname}", cat
+        return f"{uploads_root}/{remote_cat}/{fname}", cat
 
 def upload_contents_api(cfg, token, local_path, remote_path, category):
     owner = cfg["owner"]
@@ -736,7 +840,8 @@ def upload_contents_api(cfg, token, local_path, remote_path, category):
         blob = f.read()
     b64 = base64.b64encode(blob).decode("ascii")
 
-    msg = f"{category} ⋅ {os.path.basename(local_path)}"
+    # Use the final processed name in the commit comment, not the source basename.
+    msg = commit_message_for(category, os.path.basename(remote_path))
 
     payload = {"message": msg, "content": b64, "branch": branch}
     resp = api_request("PUT", url, token, data=payload)
@@ -772,15 +877,19 @@ def get_or_create_release(cfg, token):
     rel = api_request("POST", url_create, token, data=payload)
     return rel["upload_url"]
 
-def upload_release_asset(cfg, token, local_path, category):
+def upload_release_asset(cfg, token, local_path, category, override_path=None):
     upload_url_tmpl = get_or_create_release(cfg, token)
     upload_url = upload_url_tmpl.split("{")[0]
 
     fname = sanitize_filename(os.path.basename(local_path))
-    # Prefix category for releases (no folders there)
+    # Prefix category for releases (no folders there). A --path override
+    # replaces the category as the prefix, since releases have no folders.
     root, ext = os.path.splitext(fname)
-    if cfg.get("release_prefix_category", True):
-        root = f"{category}-{root}"
+    if override_path:
+        prefix = override_path.replace("/", "-")
+        root = f"{prefix}-{root}"
+    elif cfg.get("release_prefix_category", True):
+        root = release_prefix_for(category, root)
     if cfg.get("release_append_timestamp", True):
         root = f"{root}-{int(time.time())}"
     fname = root + ext
@@ -802,13 +911,13 @@ def upload_release_asset(cfg, token, local_path, category):
     resp = json.loads(out.decode("utf-8"))
     return resp.get("browser_download_url")
 
-def format_links(cfg, local_path, url, remote_path=None):
+def format_links(cfg, local_path, url, remote_path=None, formats=None, is_release=False):
     # For images and audio: use processed remote filename (better readability)
     # For other files: use original local filename (preserves original name)
     cat = category_for_path(local_path)
     is_image = cat == "Images"
     is_audio = cat == "Audio"
-    
+
     if remote_path and (is_image or is_audio):
         # Images and audio should use the processed filename
         # Images: e.g., "Cold Steel - 2023 - Deeper Into Greater Pain.jpg"
@@ -817,7 +926,22 @@ def format_links(cfg, local_path, url, remote_path=None):
     else:
         # Other files use original local filename
         display_fname = os.path.basename(local_path)
-    
+
+    if formats:
+        # New multi-format path: --format was passed on the CLI.
+        jsdelivr_url = None
+        if not is_release and remote_path and cfg.get("owner") and cfg.get("repo"):
+            jsdelivr_url = build_jsdelivr_url(
+                cfg["owner"], cfg["repo"], cfg.get("branch", "main"), remote_path
+            )
+        lines, warnings = render_formats(
+            formats, display_fname, url, is_image=is_image, is_audio=is_audio,
+            jsdelivr_url=jsdelivr_url,
+        )
+        for w in warnings:
+            eprint(f"Warning: {w}")
+        return "\n".join(lines)
+
     mode = cfg.get("output_mode", "markdown")  # markdown | url | both
     extra_audio = bool(cfg.get("also_audio_html", True))
     
@@ -836,6 +960,115 @@ def format_links(cfg, local_path, url, remote_path=None):
         lines.append(url)
     return "\n".join(lines)
 
+PATH_PICK_SENTINEL = "__GUPLOAD_PICK_FOLDER__"
+
+
+def fetch_existing_upload_folders(cfg, token):
+    """List existing folder paths under uploads/ in the repo, for the
+    --path interactive picker. Returns a sorted list of relative paths
+    (e.g. 'audio', 'images/covers'). Best-effort: returns [] on any
+    error rather than failing the whole picker.
+    """
+    owner = cfg["owner"]
+    repo = cfg["repo"]
+    branch = cfg.get("branch", "main")
+    url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
+    try:
+        resp = api_request("GET", url, token)
+    except Exception:
+        return []
+    if not resp:
+        return []
+    folders = set()
+    for item in resp.get("tree", []):
+        if item.get("type") != "tree":
+            continue
+        path = item.get("path", "")
+        if path.startswith("uploads/"):
+            folders.add(path[len("uploads/"):])
+        elif path == "uploads":
+            continue
+    return sorted(folders)
+
+
+def pick_folder_interactively(cfg, token):
+    """Interactive folder picker for --path with no value.
+
+    Uses questionary when available; falls back to a plain numbered
+    prompt on stdin otherwise. Returns a sanitized repo-relative path,
+    or None if the user cancels.
+    """
+    folders = fetch_existing_upload_folders(cfg, token)
+    new_option = "+ new folder..."
+
+    try:
+        import questionary
+        choices = folders + [new_option]
+        choice = questionary.select(
+            "Choose a destination folder under uploads/:", choices=choices
+        ).ask()
+        if choice is None:
+            return None
+        if choice == new_option:
+            typed = questionary.text("New folder path (under uploads/):").ask()
+            if not typed:
+                return None
+            return sanitize_repo_path(typed)
+        return choice
+    except ImportError:
+        eprint("Existing folders under uploads/:")
+        for i, f in enumerate(folders, 1):
+            eprint(f"  {i}. {f}")
+        eprint(f"  {len(folders) + 1}. {new_option}")
+        raw = input("Choose a number or type a new path: ").strip()
+        if not raw:
+            return None
+        if raw.isdigit():
+            idx = int(raw)
+            if 1 <= idx <= len(folders):
+                return folders[idx - 1]
+            if idx == len(folders) + 1:
+                typed = input("New folder path (under uploads/): ").strip()
+                if not typed:
+                    return None
+                return sanitize_repo_path(typed)
+            return None
+        return sanitize_repo_path(raw)
+
+
+def print_preview_rows(rows):
+    """Render --preview output. Uses a rich table when available,
+    otherwise falls back to the original plain-text block format.
+    """
+    if not rows:
+        return
+    try:
+        from rich.console import Console
+        from rich.table import Table
+        table = Table(title="Upload preview")
+        table.add_column("File")
+        table.add_column("Category")
+        table.add_column("Filename")
+        table.add_column("Remote path")
+        table.add_column("Transport")
+        table.add_column("Formats")
+        for r in rows:
+            table.add_row(
+                r["original"], r["category"], r["filename"],
+                r["remote_path"], r["transport"], r["formats"],
+            )
+        Console().print(table)
+    except ImportError:
+        for r in rows:
+            print(f"[PREVIEW] {r['original']}")
+            print(f"  category: {r['category']}")
+            print(f"  filename: {r['filename']}")
+            print(f"  remote path: {r['remote_path']}")
+            print(f"  transport: {r['transport']}")
+            if r["formats"] != "-":
+                print(f"  formats: {r['formats']}")
+
+
 def main(argv):
     # Parse arguments
     parser = argparse.ArgumentParser(description='Upload files to GitHub and get markdown/URL links')
@@ -843,7 +1076,16 @@ def main(argv):
     parser.add_argument('-n', '--name', dest='custom_name', help='Custom filename for single file upload')
     parser.add_argument('--names', nargs='+', dest='custom_names', help='Custom filenames for multiple files (must match number of files)')
     parser.add_argument('-v', '--verbose', action='store_true', help='Verbose output')
-    
+    parser.add_argument('--preview', '--dry-run', action='store_true', dest='preview',
+                        help='Show proposed names and paths without uploading')
+    parser.add_argument('--path', nargs='?', const=PATH_PICK_SENTINEL, default=None,
+                        dest='path_override',
+                        help='Manual destination folder under uploads/, bypassing auto-categorization. '
+                             'Pass with no value for an interactive picker.')
+    parser.add_argument('--format', dest='formats',
+                        help='Comma-separated output formats: mdlink,mdimage,literal,html,jsdelivr. '
+                             'Default: current auto behavior (config output_mode).')
+
     # Parse known args (allow unknown args for backward compatibility)
     args, unknown = parser.parse_known_args()
     
@@ -853,18 +1095,39 @@ def main(argv):
         all_files = args.files + unknown
         custom_names = None
         verbose = args.verbose
+        preview = args.preview
     else:
         all_files = args.files
         custom_names = [args.custom_name] if args.custom_name else (args.custom_names if args.custom_names else None)
         verbose = args.verbose
+        preview = args.preview
     
     cfg = load_config()
     token = get_token(cfg)
 
     if not all_files:
-        eprint("Usage: ghu <file1> [file2 ...] [--name custom_name]")
-        eprint("       ghu <url1> [url2 ...] [--name custom_name]")
+        eprint("Usage: gupload <file1> [file2 ...] [--name custom_name]")
+        eprint("       gupload <url1> [url2 ...] [--name custom_name]")
         sys.exit(2)
+
+    override_path = None
+    if args.path_override is not None:
+        if args.path_override == PATH_PICK_SENTINEL:
+            chosen = pick_folder_interactively(cfg, token)
+            if chosen is None:
+                eprint("No folder chosen, aborting.")
+                sys.exit(1)
+            override_path = chosen
+        else:
+            try:
+                override_path = sanitize_repo_path(args.path_override)
+            except ValueError as e:
+                eprint(f"Invalid --path: {e}")
+                sys.exit(2)
+
+    formats = None
+    if args.formats:
+        formats = [f.strip().lower() for f in args.formats.split(",") if f.strip()]
 
     max_contents_mb = float(cfg.get("contents_max_mb", 95))
     if not verbose:
@@ -873,8 +1136,18 @@ def main(argv):
     out_blocks = []
     errors = []
     temp_files = []  # Track temp files for cleanup
+    preview_count = 0
+    preview_rows = []
 
-    for i, p in enumerate(all_files, 1):
+    file_iter = enumerate(all_files, 1)
+    if not preview and not verbose and len(all_files) > 1:
+        try:
+            from rich.progress import track
+            file_iter = track(file_iter, total=len(all_files), description="Uploading")
+        except ImportError:
+            pass
+
+    for i, p in file_iter:
         original_path = p
         custom_name = custom_names[i-1] if custom_names and i <= len(custom_names) else None
         is_url_input = is_url(p)
@@ -917,17 +1190,35 @@ def main(argv):
             size_mb = os.path.getsize(p) / (1024 * 1024)
 
             if verbose:
-                eprint(f"[{i}/{len(all_files)}] Uploading {os.path.basename(p)} ({size_mb:.1f} MB) as {category}...")
+                eprint(f"[{i}/{len(all_files)}] Uploading {os.path.basename(p)} ({size_mb:.1f} MB) as {category.lower()}...")
+
+            if preview:
+                preview_path, preview_category = build_repo_path(
+                    cfg, p, token, custom_name=custom_name, override_path=override_path
+                )
+                transport = "contents" if size_mb <= max_contents_mb else "release"
+                preview_rows.append({
+                    "original": original_path,
+                    "category": preview_category.lower(),
+                    "filename": os.path.basename(preview_path),
+                    "remote_path": preview_path,
+                    "transport": f"GitHub {transport}",
+                    "formats": ", ".join(formats) if formats else "-",
+                })
+                preview_count += 1
+                continue
 
             if size_mb <= max_contents_mb:
-                remote_path, cat = build_repo_path(cfg, p, token, custom_name=custom_name)
+                remote_path, cat = build_repo_path(
+                    cfg, p, token, custom_name=custom_name, override_path=override_path
+                )
                 if verbose:
                     eprint(f"  → Repo path: {remote_path}")
                 url = upload_contents_api(cfg, token, p, remote_path, cat)
                 if not url:
                     raise RuntimeError("No download_url returned for contents upload.")
                 # Pass remote_path so format_links uses the processed filename
-                out_blocks.append(format_links(cfg, p, url, remote_path))
+                out_blocks.append(format_links(cfg, p, url, remote_path, formats=formats, is_release=False))
                 # Log successful upload
                 log_upload(p, os.path.basename(remote_path), url, cat)
                 if verbose:
@@ -937,13 +1228,15 @@ def main(argv):
                     raise RuntimeError(f"File too large (>2 GiB): {p}")
                 if verbose:
                     eprint(f"  → Using release asset (large file)...")
-                url = upload_release_asset(cfg, token, p, category)
+                url = upload_release_asset(cfg, token, p, category, override_path=override_path)
                 if not url:
                     raise RuntimeError("No browser_download_url returned for release upload.")
                 # For release assets, build a remote_path for display purposes (even though file is in release)
                 # This ensures audio files show the processed filename in markdown
-                remote_path_for_display, _ = build_repo_path(cfg, p, token, custom_name=custom_name)
-                out_blocks.append(format_links(cfg, p, url, remote_path_for_display))
+                remote_path_for_display, _ = build_repo_path(
+                    cfg, p, token, custom_name=custom_name, override_path=override_path
+                )
+                out_blocks.append(format_links(cfg, p, url, remote_path_for_display, formats=formats, is_release=True))
                 # Log successful upload
                 log_upload(p, os.path.basename(remote_path_for_display), url, category)
                 if verbose:
@@ -970,6 +1263,13 @@ def main(argv):
                 os.remove(tf)
         except Exception:
             pass
+
+    if preview:
+        print_preview_rows(preview_rows)
+        print(f"Previewed {preview_count} file(s); nothing was uploaded.")
+        if errors:
+            eprint(f"Encountered {len(errors)} preview error(s).")
+        return
 
     if not out_blocks:
         eprint("No files uploaded successfully.")

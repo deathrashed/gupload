@@ -1,12 +1,33 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PY="/Volumes/Eksternal/Projects/Gupload/scripts/gupload.py"
-PYBIN="/usr/bin/python3"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+PY="$SCRIPT_DIR/../scripts/gupload.py"
+PROJECT_ROOT="$SCRIPT_DIR/../.."
+VENV="$PROJECT_ROOT/.venv"
+SYSTEM_PYBIN="/usr/bin/python3"
 OSAS="/usr/bin/osascript"
 SEC="/usr/bin/security"
 GHCLI="/opt/homebrew/bin/gh"
 LOG="/tmp/gupload.log"
+
+# One-time venv bootstrap for questionary/rich/python-magic. Falls back
+# to the system Python (core upload still works, just without the
+# nicer picker/preview/detection features) if setup fails for any
+# reason - never block the actual upload on this.
+PYBIN="$SYSTEM_PYBIN"
+if [[ -x "$VENV/bin/python3" ]]; then
+  PYBIN="$VENV/bin/python3"
+elif [[ -f "$PROJECT_ROOT/requirements.txt" ]]; then
+  echo "Gupload: first run, setting up venv..." >&2
+  if "$SYSTEM_PYBIN" -m venv "$VENV" >>"$LOG" 2>&1 \
+     && PIP_USER=0 "$VENV/bin/pip" install -q -r "$PROJECT_ROOT/requirements.txt" >>"$LOG" 2>&1; then
+    PYBIN="$VENV/bin/python3"
+  else
+    echo "Gupload: venv setup failed, falling back to system Python (see $LOG)." >&2
+    rm -rf "$VENV"
+  fi
+fi
 
 # Pull token from env if present; otherwise prefer gh CLI, then Keychain
 if [[ -z "${GITHUB_TOKEN:-}" && -z "${GH_TOKEN:-}" ]]; then

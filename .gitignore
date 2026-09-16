@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 *.so
 .Python
+.venv/
+.pytest_cache/
 
 # Config (contains secrets)
 config.json

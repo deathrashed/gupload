@@ -59,7 +59,7 @@
 				<key>ActionParameters</key>
 				<dict>
 					<key>COMMAND_STRING</key>
-					<string>/Volumes/Eksternal/Projects/Gupload/ghu "$@"</string>
+					<string>/Users/rd/Scripts/Riley/gupload/src/bin/gupload "$@"</string>
 					<key>CheckedForUserDefaultShell</key>
 					<true/>
 					<key>inputMethod</key>

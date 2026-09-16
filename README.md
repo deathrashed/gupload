@@ -41,6 +41,8 @@ $EDITOR ~/.config/gupload/config.json
 
 Gupload needs Python 3 and a GitHub repository. Authentication can come from `GITHUB_TOKEN`, `GH_TOKEN`, GitHub CLI, or the macOS Keychain integration used by the wrapper.
 
+On first run, `src/bin/gupload` auto-creates a `.venv` and installs `questionary`, `rich`, and `python-magic` (needs `brew install libmagic` on the system for the last one). If that setup fails for any reason it falls back to the system Python automatically — core uploads still work, just without the interactive `--path` picker, the rich preview table, and content-based category detection for extensionless files.
+
 ## <img src="https://api.iconify.design/mdi:star-four-points-outline.svg?color=%23b030f0" height="22"> What It Does
 
 | Capability | Result |
@@ -85,10 +87,24 @@ printf '%s\n' /path/to/file1.mp3 /path/to/file2.jpg | ./src/bin/gupload
 | --- | --- |
 | `--name NAME` | Name one downloaded or uploaded file. |
 | `--names NAME...` | Supply names for multiple URL inputs. |
+| `--path [FOLDER]` | Manually choose the destination folder under `uploads/`, bypassing auto-categorization. With no value, opens an interactive picker over the repo's existing folders. |
+| `--format LIST` | Comma-separated output formats: `mdlink`, `mdimage`, `literal`, `html`, `jsdelivr`. Prints each on its own line. `jsdelivr` only works for contents-API uploads (not release assets). Omit for the existing config-driven default. |
 | `--verbose` | Show more request and processing detail. |
+| `--preview` / `--dry-run` | Show the proposed name/category/path/formats without uploading (rendered as a table). |
 | `--help` | Display the command-line help. |
 
 Run `./src/bin/gupload --help` for the authoritative option list.
+
+```bash
+# Manual folder override
+./src/bin/gupload icon.svg --path icons/wtfpl
+
+# Interactive folder picker
+./src/bin/gupload icon.svg --path
+
+# Multiple output formats at once
+./src/bin/gupload cover.jpg --format mdimage,jsdelivr,literal
+```
 
 ## <img src="https://api.iconify.design/mdi:source-branch.svg?color=%23b030f0" height="22"> How It Works
 
@@ -173,9 +189,13 @@ gupload/
 │   ├── data/
 │       ├── config.example.json      # Safe configuration template
 │       ├── assets/                  # README and workflow artwork
-│       └── Gupload.workflow/        # macOS Quick Look workflow
+│       └── gupload.workflow/        # macOS Quick Action workflow
 │   └── docs/                        # Extended project documentation
+├── tests/                           # pytest unit tests for gupload.py
 ├── uploads/                         # Lowercase remote/local upload tree
+├── .venv/                           # Auto-created on first run (gitignored)
+├── requirements.txt                 # questionary, rich, python-magic
+├── requirements-dev.txt             # + pytest
 ├── .gitignore
 ├── CLAUDE.md
 └── README.md
