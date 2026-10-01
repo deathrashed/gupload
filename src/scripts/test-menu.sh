@@ -4,7 +4,8 @@
 set -u
 
 # Source the menu script functions
-source /Volumes/Eksternal/Projects/Gupload/scripts/gupload-menu.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+source "$SCRIPT_DIR/gupload-menu.sh"
 
 # Test files
 TEST_LOGO="/Volumes/Eksternal/Audio/Metal/D/Deeds Of Flesh/logo.png"
@@ -16,10 +17,10 @@ TEST_ARTIST_PATH="/Volumes/Eksternal/Audio/Metal/D/Deeds Of Flesh"
 echo "=== Testing Menu Functions ==="
 echo
 
-# Test 1: Check if ghu script is found
-echo "Test 1: Checking ghu script..."
+# Test 1: Check if gupload script is found
+echo "Test 1: Checking gupload script..."
 if check_ghu; then
-    echo "✓ GHU found: $GHU"
+echo "✓ gupload found: $GHU"
 else
     echo "✗ GHU not found!"
     exit 1
@@ -29,7 +30,7 @@ echo
 # Test 2: Test upload_with_custom_naming function with default naming
 echo "Test 2: Testing default upload (should show upload command)..."
 echo "File: $TEST_LOGO"
-echo "Expected: Should call ghu with file path"
+echo "Expected: Should call gupload with file path"
 # We'll just check if it can build the command, not actually upload
 echo "Command would be: $GHU \"$TEST_LOGO\""
 echo
@@ -72,9 +73,9 @@ echo
 
 # Test 6: Test upload-artist-assets.sh script
 echo "Test 6: Testing upload-artist-assets.sh script..."
-if [[ -x "/Volumes/Eksternal/Projects/Gupload/scripts/upload-artist-assets.sh" ]]; then
+if [[ -x "$SCRIPT_DIR/upload-artist-assets.sh" ]]; then
     echo "✓ Script is executable"
-    echo "Would run: GHU=\"$GHU\" /Volumes/Eksternal/Projects/Gupload/scripts/upload-artist-assets.sh \"$TEST_ARTIST_PATH\""
+    echo "Would run: GHU=\"$GHU\" $SCRIPT_DIR/upload-artist-assets.sh \"$TEST_ARTIST_PATH\""
 else
     echo "✗ Script not found or not executable"
 fi

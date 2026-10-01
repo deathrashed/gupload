@@ -19,7 +19,7 @@ NC='\033[0m' # No Color
 # Get script directory (works even when symlinked or called via alias)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
-GHU="$REPO_ROOT/ghu"
+GHU="$REPO_ROOT/bin/gupload"
 PYTHON_SCRIPT="$REPO_ROOT/scripts/gupload.py"
 LIST_ARTISTS_SCRIPT="$SCRIPT_DIR/list-repo-artists.py"
 UPLOAD_ASSETS_SCRIPT="$SCRIPT_DIR/upload-artist-assets.sh"
@@ -35,23 +35,20 @@ mkdir -p "$DATA_DIR"
 # DIM color for subtle text
 DIM='\033[2m'
 
-# Fallback: If ghu not found at calculated path, try common locations
+# Fallback: If gupload not found at calculated path, try common locations
 if [[ ! -x "$GHU" ]]; then
-    if [[ -x "/Volumes/Eksternal/Projects/Gupload/ghu" ]]; then
-        GHU="/Volumes/Eksternal/Projects/Gupload/ghu"
-        REPO_ROOT="/Volumes/Eksternal/Projects/Gupload"
-    elif [[ -x "$HOME/Scripts/Riley/Gupload/ghu" ]]; then
-        GHU="$HOME/Scripts/Riley/Gupload/ghu"
+    if [[ -x "$HOME/Scripts/Riley/Gupload/src/bin/gupload" ]]; then
+        GHU="$HOME/Scripts/Riley/Gupload/src/bin/gupload"
         REPO_ROOT="$(cd "$(dirname "$GHU")" && pwd -P)"
-    elif command -v ghu &> /dev/null; then
-        GHU="$(command -v ghu)"
+    elif command -v gupload &> /dev/null; then
+        GHU="$(command -v gupload)"
         REPO_ROOT="$(cd "$(dirname "$GHU")" && pwd -P)"
     fi
     # Update script paths based on resolved REPO_ROOT
     if [[ -n "$REPO_ROOT" ]] && [[ -d "$REPO_ROOT" ]]; then
-        PYTHON_SCRIPT="$REPO_ROOT/scripts/gupload.py"
-        LIST_ARTISTS_SCRIPT="$REPO_ROOT/scripts/list-repo-artists.py"
-        UPLOAD_ASSETS_SCRIPT="$REPO_ROOT/scripts/upload-artist-assets.sh"
+        PYTHON_SCRIPT="$REPO_ROOT/../scripts/gupload.py"
+        LIST_ARTISTS_SCRIPT="$REPO_ROOT/../scripts/list-repo-artists.py"
+        UPLOAD_ASSETS_SCRIPT="$REPO_ROOT/../scripts/upload-artist-assets.sh"
     fi
 fi
 
@@ -93,25 +90,21 @@ wait_for_q() {
 }
 
 check_ghu() {
-    # Try to find ghu if not already set or not executable
+    # Try to find gupload if not already set or not executable
     if [[ ! -x "$GHU" ]]; then
         # Try common locations
-        if [[ -x "/Volumes/Eksternal/Projects/Gupload/ghu" ]]; then
-            GHU="/Volumes/Eksternal/Projects/Gupload/ghu"
-            REPO_ROOT="/Volumes/Eksternal/Projects/Gupload"
-        elif [[ -x "$HOME/Scripts/Riley/Gupload/ghu" ]]; then
-            GHU="$HOME/Scripts/Riley/Gupload/ghu"
+        if [[ -x "$HOME/Scripts/Riley/Gupload/src/bin/gupload" ]]; then
+            GHU="$HOME/Scripts/Riley/Gupload/src/bin/gupload"
             REPO_ROOT="$(cd "$(dirname "$GHU")" && pwd -P)"
-        elif command -v ghu &> /dev/null; then
-            GHU="$(command -v ghu)"
+        elif command -v gupload &> /dev/null; then
+            GHU="$(command -v gupload)"
             REPO_ROOT="$(cd "$(dirname "$GHU")" && pwd -P)"
         else
-            echo -e "${RED}Error: Gupload script (ghu) not found${NC}" >&2
+            echo -e "${RED}Error: gupload executable not found${NC}" >&2
             echo -e "${YELLOW}Tried locations:${NC}" >&2
             echo -e "  - $GHU" >&2
-            echo -e "  - /Volumes/Eksternal/Projects/Gupload/ghu" >&2
-            echo -e "  - $HOME/Scripts/Riley/Gupload/ghu" >&2
-            echo -e "${YELLOW}Please ensure ghu is in one of these locations or in PATH${NC}" >&2
+            echo -e "  - $HOME/Scripts/Riley/Gupload/src/bin/gupload" >&2
+            echo -e "${YELLOW}Please ensure gupload is in one of these locations or in PATH${NC}" >&2
             return 1
         fi
     fi

@@ -24,18 +24,16 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 # Use GHU from environment if set, otherwise calculate from script location
 if [[ -z "${GHU:-}" ]]; then
     REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd -P)"
-    GHU="$REPO_ROOT/ghu"
+    GHU="$REPO_ROOT/bin/gupload"
 fi
 
-# Fallback: If ghu not found, try to find it via common locations
+# Fallback: If gupload not found, try to find it via common locations
 if [[ ! -x "$GHU" ]]; then
-    # Try to find ghu in expected locations
-    if [[ -x "/Volumes/Eksternal/Projects/Gupload/ghu" ]]; then
-        GHU="/Volumes/Eksternal/Projects/Gupload/ghu"
-    elif [[ -x "$HOME/Scripts/Riley/Gupload/ghu" ]]; then
-        GHU="$HOME/Scripts/Riley/Gupload/ghu"
-    elif command -v ghu &> /dev/null; then
-        GHU="$(command -v ghu)"
+    # Try to find gupload in expected locations
+    if [[ -x "$HOME/Scripts/Riley/Gupload/src/bin/gupload" ]]; then
+        GHU="$HOME/Scripts/Riley/Gupload/src/bin/gupload"
+    elif command -v gupload &> /dev/null; then
+        GHU="$(command -v gupload)"
     else
         echo -e "${RED}Error: Gupload script not found${NC}" >&2
         echo -e "${YELLOW}Tried: $GHU${NC}" >&2

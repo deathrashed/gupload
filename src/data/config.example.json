@@ -12,7 +12,7 @@
   "append_short_hash": false,
   "use_audio_metadata": true,
   "use_path_for_generic_names": true,
-  "generic_name_spaced_format": false,
+  "generic_name_spaced_format": true,
   "use_path_for_audio_names": true,
   "use_image_subfolders": true,
   "organize_by_artist": false,
