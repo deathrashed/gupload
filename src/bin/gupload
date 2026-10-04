@@ -5,11 +5,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 PY="$SCRIPT_DIR/../scripts/gupload.py"
 PROJECT_ROOT="$SCRIPT_DIR/../.."
 VENV="$PROJECT_ROOT/.venv"
-SYSTEM_PYBIN="/usr/bin/python3"
-OSAS="/usr/bin/osascript"
-SEC="/usr/bin/security"
-GHCLI="/opt/homebrew/bin/gh"
-LOG="/tmp/gupload.log"
+# Prefer the well-known macOS paths (Automator has a minimal PATH), but fall
+# back to PATH lookups so Linux and Termux (Android) work too.
+find_tool() {
+  local name="$1"; shift
+  local c
+  for c in "$@"; do [[ -x "$c" ]] && { echo "$c"; return; }; done
+  command -v "$name" 2>/dev/null || true
+}
+SYSTEM_PYBIN="$(find_tool python3 /usr/bin/python3)"
+OSAS="$(find_tool osascript /usr/bin/osascript)"
+SEC="$(find_tool security /usr/bin/security)"
+GHCLI="$(find_tool gh /opt/homebrew/bin/gh /usr/local/bin/gh)"
+LOG="${TMPDIR:-/tmp}/gupload.log"
 
 # One-time venv bootstrap for questionary/rich/python-magic. Falls back
 # to the system Python (core upload still works, just without the
@@ -32,7 +40,7 @@ fi
 # Pull token from env if present; otherwise prefer gh CLI, then Keychain
 if [[ -z "${GITHUB_TOKEN:-}" && -z "${GH_TOKEN:-}" ]]; then
   # Try gh CLI first (usually more reliable) - use full path for Automator compatibility
-  if [[ -x "$GHCLI" ]]; then
+  if [[ -n "$GHCLI" ]]; then
     tok="$("$GHCLI" auth token 2>/dev/null || true)"
     if [[ -n "$tok" ]]; then
       export GITHUB_TOKEN="$tok"
@@ -40,7 +48,7 @@ if [[ -z "${GITHUB_TOKEN:-}" && -z "${GH_TOKEN:-}" ]]; then
   fi
   
   # Fallback to Keychain if gh CLI token not available
-  if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+  if [[ -z "${GITHUB_TOKEN:-}" && -n "$SEC" ]]; then
     tok="$("$SEC" find-generic-password -s "GuploadGitHubToken" -w 2>/dev/null || true)"
     if [[ -n "$tok" ]]; then
       export GITHUB_TOKEN="$tok"
@@ -84,8 +92,8 @@ done
 paths=("${norm[@]}")
 
 # Finder selection fallback
-if [[ ${#paths[@]} -eq 0 ]]; then
-  sel="$("$OSAS" <<'APPLESCRIPT' 2>>/tmp/gupload.log || true
+if [[ ${#paths[@]} -eq 0 && -n "$OSAS" ]]; then
+  sel="$("$OSAS" <<'APPLESCRIPT' 2>>"$LOG" || true
 tell application "Finder"
   set theItems to selection
   if theItems is {} then return ""

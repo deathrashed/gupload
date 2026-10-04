@@ -6,6 +6,7 @@ import hashlib
 import json
 import mimetypes
 import os
+import shutil
 import re
 import subprocess
 import sys
@@ -252,11 +253,16 @@ def remove_track_number(filename: str) -> str:
     return cleaned.strip()
 
 def clipboard_set(text: str):
-    try:
-        p = subprocess.Popen(["pbcopy"], stdin=subprocess.PIPE)
-        p.communicate(text.encode("utf-8"))
-    except Exception:
-        pass
+    # macOS, Wayland, X11, Termux (Android) - first one installed wins.
+    for cmd in (["pbcopy"], ["wl-copy"], ["xclip", "-selection", "clipboard"],
+                ["xsel", "--clipboard", "--input"], ["termux-clipboard-set"]):
+        if shutil.which(cmd[0]):
+            try:
+                p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
+                p.communicate(text.encode("utf-8"))
+            except Exception:
+                pass
+            return
 
 def log_upload(filepath, filename, url, category):
     """Log successful upload to recent uploads file."""
@@ -357,6 +363,29 @@ def render_formats(formats, filename, url, is_image, is_audio, jsdelivr_url=None
         else:
             warnings.append(f"Unknown format '{fmt}' - skipped")
     return lines, warnings
+
+
+DEFAULT_TAXONOMY_RULES = [
+    {"match": r"^(licen[cs]e|copying|unlicense|notice)(\..*)?$", "path": "files/licenses"},
+    {"match": r"\.(ico|icns)$", "path": "icons"},
+]
+
+
+def taxonomy_path_for(cfg, path: str):
+    """Return a taxonomy folder (e.g. 'files/licenses') for a file, or None.
+
+    Rules are regexes tested case-insensitively against the basename. User
+    rules from cfg['taxonomy_rules'] are checked before the built-in ones.
+    """
+    name = os.path.basename(path)
+    rules = list(cfg.get("taxonomy_rules") or []) + DEFAULT_TAXONOMY_RULES
+    for rule in rules:
+        try:
+            if re.search(rule["match"], name, re.IGNORECASE):
+                return rule["path"].strip("/").lower()
+        except (KeyError, re.error):
+            continue
+    return None
 
 
 def category_for_path(path: str) -> str:
@@ -619,6 +648,10 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None, override_path
     # Always use lowercase uploads/ as the root folder for uploads.
     uploads_root = "uploads"
     cat = category_for_path(local_path)
+    if not override_path:
+        # Taxonomy rules (licenses -> files/licenses, .ico -> icons, ...)
+        # behave like a built-in path override.
+        override_path = taxonomy_path_for(cfg, local_path)
     remote_cat = override_path if override_path else cat.lower()
 
     # If custom name provided, use it directly (with proper extension)
@@ -779,7 +812,7 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None, override_path
     elif cat == "Scripts":
         # Handle script language subfolders and package structures
         ext = os.path.splitext(local_path)[1].lower()
-        language_folder = get_script_language_subfolder(ext)
+        language_folder = get_script_language_subfolder(ext).lower()
         
         # Detect if this is part of a package/module structure
         is_package, package_root, rel_path = detect_package_structure(local_path)
@@ -807,9 +840,9 @@ def build_repo_path(cfg, local_path, token=None, custom_name=None, override_path
         image_type = get_image_type(original_basename)
         if image_type:
             subfolder_map = {
-                "cover": "Covers",
-                "logo": "Logos", 
-                "artist": "Artists"
+                "cover": "covers",
+                "logo": "logos", 
+                "artist": "artists"
             }
             subfolder = subfolder_map.get(image_type)
             if subfolder:

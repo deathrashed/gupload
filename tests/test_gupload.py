@@ -167,3 +167,27 @@ def test_category_for_path_extensionless_no_shebang_no_magic_is_other(tmp_path, 
     f = tmp_path / "mystery"
     f.write_bytes(b"random binary junk \x00\x01\x02")
     assert gupload.category_for_path(str(f)) == "Other"
+
+
+# --- taxonomy rules -------------------------------------------------------
+
+def test_taxonomy_license_files():
+    assert gupload.taxonomy_path_for({}, "/x/LICENSE") == "files/licenses"
+    assert gupload.taxonomy_path_for({}, "/x/License.txt") == "files/licenses"
+    assert gupload.taxonomy_path_for({}, "/x/license-mit.md") is None
+
+
+def test_taxonomy_icon_extensions():
+    assert gupload.taxonomy_path_for({}, "/x/app.ICNS") == "icons"
+
+
+def test_taxonomy_user_rules_win_and_lowercase():
+    cfg = {"taxonomy_rules": [{"match": r"^docker-", "path": "Icons/Docker/"}]}
+    assert gupload.taxonomy_path_for(cfg, "docker-logo.svg") == "icons/docker"
+
+
+def test_build_repo_path_uses_taxonomy(tmp_path):
+    f = tmp_path / "LICENSE"
+    f.write_text("MIT")
+    path, _ = gupload.build_repo_path({"dedup_strategy": "none"}, str(f))
+    assert path == "uploads/files/licenses/LICENSE"
