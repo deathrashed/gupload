@@ -54,3 +54,8 @@ data/logs/*.log
 .cursorignore
 .cursorindexingignore
 ruvector.db
+
+# Agent plans/specs and instructions (local only)
+docs/superpowers/
+CLAUDE.md
+uploads/test/
