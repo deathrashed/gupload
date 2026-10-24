@@ -1,12 +1,12 @@
 <div align="center">
-<img alt="gupload" src="https://shieldcn.dev/header/grid.svg?title=gupload&subtitle=upload+%E2%80%A2+reference+%E2%80%A2+archive&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fdeathrashed%2Fgupload%2Frefs%2Fheads%2Fmain%2Fuploads%2Ficons%2Fgithub%2Fgithub.png&mode=dark&font=jetbrains-mono">
 
+<p align="center"><img alt="gupload: upload, reference, archive" src="https://shieldcn.dev/header/grid.svg?title=gupload&subtitle=upload+%E2%80%A2+reference+%E2%80%A2+archive&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fdeathrashed%2Fgupload%2Frefs%2Fheads%2Fmain%2Fuploads%2Ficons%2Fgithub%2Fgithub.png&mode=dark&font=jetbrains-mono"></p>
 
   <p align="center">
     <a href="https://www.python.org/downloads/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Python%203.svg?variant=outline&amp;theme=purple&amp;logo=python&amp;logoColor=ffffff&amp;mode=auto"><img src="https://shieldcn.dev/badge/Python%203.svg?variant=outline&amp;theme=purple&amp;logo=python&amp;logoColor=ffffff&amp;mode=auto" alt="Python 3 runtime"></picture></a>
     <a href="https://docs.github.com/en/rest"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/GitHub%20API.svg?variant=outline&amp;theme=purple&amp;logo=github&amp;logoColor=ffffff&amp;mode=auto"><img src="https://shieldcn.dev/badge/GitHub%20API.svg?variant=outline&amp;theme=purple&amp;logo=github&amp;logoColor=ffffff&amp;mode=auto" alt="GitHub API uploads"></picture></a>
-<a href="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/gpl/LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/GPL%20License-purple.svg?variant=outline&amp;logo=ri%3ATbBrandOpenSource&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/badge/GPL%20License-purple.svg?variant=outline&amp;logo=ri%3ATbBrandOpenSource&amp;mode=light"></picture></a>
-        <a href="https://www.gnu.org/software/bash/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=auto"><img src="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=auto" alt="Bash command wrapper"></picture></a>
+    <a href="#license"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/GPL%20License-purple.svg?variant=outline&amp;logo=ri%3ATbBrandOpenSource&amp;mode=dark"><img alt="GPL-3.0 license" src="https://shieldcn.dev/badge/GPL%20License-purple.svg?variant=outline&amp;logo=ri%3ATbBrandOpenSource&amp;mode=light"></picture></a>
+    <a href="https://www.gnu.org/software/bash/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=auto"><img src="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=auto" alt="Bash command wrapper"></picture></a>
   </p>
   <p align="center"><strong>Upload files to GitHub and copy shareable Markdown, HTML, and raw links.</strong></p>
   <p align="center">
@@ -87,6 +87,10 @@ URL inputs remain unresolved in an offline plan: execution downloads them and pr
 suggested filename separately from temporary storage. Sensitive files are flagged before publication.
 Run `./src/bin/gupload --help` for the full interface.
 
+> [!TIP]
+> Add `--json` to any command for machine-readable plans and results. Pair it with `--preview`
+> to check where files will land before anything is published.
+
 <details>
 <summary><strong>Helpers</strong></summary>
 
@@ -123,6 +127,20 @@ For a graphical Linux picker, install your distribution's `zenity` or `kdialog` 
 
 </details>
 
+<details>
+<summary><strong>Using gupload from scripts and coding agents</strong></summary>
+
+```markdown
+## gupload: upload files to GitHub and print shareable links
+- `./src/bin/gupload FILE --preview --json`: offline plan, safe to run (no token, network, or clipboard)
+- `./src/bin/gupload FILE --save-plan plan.json`: write a reviewable plan
+- `./src/bin/gupload --apply-plan plan.json --execute --expect-repo OWNER/REPO`: publish
+- Any failed item makes the exit status nonzero; successful items stay recorded
+- `--retry-failed` retries only failed history items
+```
+
+</details>
+
 <a name="assets"></a>
 
 ## <img src="https://api.iconify.design/lucide/folders.svg?color=%23b030f0" height="22" alt=""> Assets
@@ -133,7 +151,7 @@ GitHub paths are case-sensitive; the upload root and category folders are lowerc
 
 | Location | Contents |
 | --- | --- |
-| [`uploads/files/licenses/`](uploads/files/licenses/) | GPL, MIT, and WTFPL text, snippets, logos, and badges. |
+| [`uploads/files/licenses/`](uploads/files/licenses/) | License texts, README snippets, logos, and badges (GPL, LGPL, MIT, BSD, Apache, WTFPL, Unlicense, CC0, CC BY, CC BY-SA), plus shared art in `common/`. |
 | [`uploads/icons/`](uploads/icons/) | Non-license icons, service logos, and banners. |
 | [`uploads/images/`](uploads/images/) | Image assets. |
 | [`uploads/audio/`](uploads/audio/) | Audio assets. |
@@ -141,7 +159,8 @@ GitHub paths are case-sensitive; the upload root and category folders are lowerc
 | [`uploads/scripts/`](uploads/scripts/) | Hosted scripts. |
 
 Keep license artwork beside its license text, not duplicated under `icons/` or loose in `files/`.
-Built-in presets are `wtfpl`, `mit`, `gpl`, and `docker-icons`; custom presets use the same routing
+Built-in presets cover each license folder (`gpl`, `lgpl`, `mit`, `bsd`, `apache`, `wtfpl`, `unlicense`,
+`cc0`, `cc-by`, `cc-by-sa`), shared license art (`license-common`), and `docker-icons`; custom presets use the same routing
 as `--path`. Automatic license-name detection uses the general `files/licenses/` destination.
 Uploads write to the remote repository, not your local checkout, and do not obey `.gitignore`.
 
@@ -168,8 +187,7 @@ Start from [`src/data/config.example.json`](src/data/config.example.json).
 | `release_draft` | Defaults to `true`; draft assets are not public downloads. |
 
 <details>
-<summary><strong>Authentication</strong></summary>
-
+<summary><strong>Authentication, naming, and history</strong></summary>
 
 Execution checks token identity and repository visibility before changing remote state.
 Token lookup uses `GITHUB_TOKEN`, `GH_TOKEN`, authenticated GitHub CLI, then macOS Keychain.
@@ -198,7 +216,7 @@ gupload/
 │   ├── docs/                    # Usage guide and layout reference
 │   └── tests/                   # Offline behavior and workflow regression tests
 ├── uploads/                     # Publicly hosted assets
-│   ├── files/licenses/          # Canonical GPL, MIT, and WTFPL collections
+│   ├── files/licenses/          # License collections + shared common/ art
 │   ├── icons/                   # Other icons and logos
 │   ├── images/                  # Images
 │   ├── audio/                   # Audio
@@ -226,7 +244,7 @@ platform setup, publication safeguards, and menu workflows.
 
 <a name="license"></a>
 
-## <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/open-source/free-works-logo.svg" height="20"></a> License
+## <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/common/free-works-logo.svg" height="20" alt="GPL-3.0-or-later license website"></a> License
 
 <div align="center">
 
