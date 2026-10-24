@@ -45,18 +45,9 @@ config.json
 # Data
 data/logs/*.log
 
-<<<<<<< Updated upstream
-# Uploads folder (contains personal uploads, users can clone without it)
-# Files uploaded via API will still exist on GitHub but can be excluded from clone
-||||||| Stash base
-# uploads/ is the hosted asset tree, tracked in git ON PURPOSE:
-# raw.githubusercontent/jsdelivr URLs serve these files from the repo.
-# Only test uploads are ignored.
-=======
 # uploads/ is the hosted asset tree, tracked in git ON PURPOSE:
 # raw.githubusercontent/jsdelivr URLs serve these files from the repo.
 # Test uploads and obsolete duplicate license locations are ignored.
->>>>>>> Stashed changes
 
 
 .claude-flow/

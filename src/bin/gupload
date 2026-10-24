@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -h "$SOURCE" ]]; do
+  SOURCE_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+  TARGET="$(readlink "$SOURCE")"
+  if [[ "$TARGET" == /* ]]; then
+    SOURCE="$TARGET"
+  else
+    SOURCE="$SOURCE_DIR/$TARGET"
+  fi
+done
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd -P)"
+if [[ -x "$PROJECT_ROOT/.venv/bin/python3" ]]; then
+  PYBIN="$PROJECT_ROOT/.venv/bin/python3"
+elif command -v python3 >/dev/null 2>&1; then
+  PYBIN="$(command -v python3)"
+else
+  echo "gupload: python3 is required" >&2
+  exit 127
+fi
+
+# Platform code collects stdin safely, decodes file:// inputs, and opens the
+# offline dialog on an empty invocation. No package installation or auth lookup
+# happens in this launcher.
+exec "$PYBIN" -c 'import sys; from pathlib import Path; sys.path.insert(0, str(Path(sys.argv[1]).resolve().parent)); from gupload_platform import launcher_main; raise SystemExit(launcher_main(sys.argv[2:]))' "$SCRIPT_DIR/../scripts/gupload_platform.py" "$@"

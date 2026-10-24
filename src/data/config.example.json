@@ -1,0 +1,58 @@
+{
+  "owner": "your-github-username",
+  "repo": "your-repo-name",
+  "branch": "main",
+
+  "_comment_paths": "Path configuration",
+  "repo_path_prefix": "",
+
+  "_comment_taxonomy": "Optional regex rules mapping filenames to a folder under uploads/ (checked before built-in rules; path is lowercased)",
+  "taxonomy_rules": [
+    { "match": "^docker-", "path": "icons/docker" }
+  ],
+
+  "_comment_presets": "Built-in presets: wtfpl, mit, gpl, docker-icons. Add named destinations here; explicit CLI options take precedence.",
+  "presets": {
+    "album-covers": {
+      "path": "images/covers",
+      "formats": ["mdimage", "jsdelivr"],
+      "collision": "rename"
+    }
+  },
+
+  "_comment_filenames": "Filename handling",
+  "clean_filename": true,
+  "dedup_strategy": "none",
+  "append_short_hash": false,
+  "use_audio_metadata": true,
+  "use_path_for_generic_names": true,
+  "generic_name_spaced_format": true,
+  "use_path_for_audio_names": true,
+  "use_image_subfolders": true,
+  "organize_by_artist": false,
+
+  "_comment_upload": "Upload behavior",
+  "contents_max_mb": 95,
+  "continue_on_error": true,
+  "verbose": false,
+  "collision_policy": "skip-identical",
+
+  "_comment_safety": "Plans are offline by default. Execution requires --execute and an exact --expect-repo value or an allowed destination.",
+  "allowed_destinations": [],
+  "expected_account": "",
+
+  "_comment_output": "Output formatting",
+  "output_mode": "markdown",
+  "also_audio_html": true,
+
+  "_comment_release": "Release settings for large files",
+  "release_tag": "gupload-uploads",
+  "release_name": "Uploads",
+  "release_draft": true,
+  "release_prerelease": false,
+  "release_prefix_category": true,
+  "release_append_timestamp": true,
+
+  "_comment_auth": "Authentication",
+  "allow_gh_cli_token": true
+}

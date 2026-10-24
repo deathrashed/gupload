@@ -1,0 +1,14 @@
+{
+  "spdx_id": "BSD-2-Clause",
+  "name": "BSD 2-Clause \"Simplified\" License",
+  "category": "permissive",
+  "osi_approved": true,
+  "fsf_libre": true,
+  "deprecated": false,
+  "is_exception": false,
+  "urls": [
+    "https://opensource.org/license/BSD-2-Clause"
+  ],
+  "spdx_page": "https://spdx.org/licenses/BSD-2-Clause.html",
+  "description": "A permissive license that comes in two variants, the <a href=\"/licenses/bsd-2-clause/\">BSD 2-Clause</a> and <a href=\"/licenses/bsd-3-clause/\">BSD 3-Clause</a>. Both have very minute differences to the MIT license."
+}

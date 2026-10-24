@@ -1,0 +1,5 @@
+https://custom-icon-badges.demolab.com/badge/Licence-wtfpl-622284?style=for-the-badge&logo=wtfpl-logo-white&logoColor=white
+
+depending on the style change the color of the badge banner
+
+https://custom-icon-badges.demolab.com/badge/Licence-wtfpl- {change color} ?style=for-the-badge&logo=wtfpl-logo-white&logoColor=white
