@@ -3,9 +3,10 @@
 
 
   <p align="center">
-    <a href="https://www.python.org/downloads/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Python%203.svg?variant=outline&amp;theme=purple&amp;logo=python&amp;logoColor=ffffff&amp;mode=dark"><img src="https://shieldcn.dev/badge/Python%203.svg?variant=outline&amp;theme=purple&amp;logo=python&amp;logoColor=ffffff&amp;mode=light" alt="Python 3 runtime"></picture></a>
-    <a href="https://www.gnu.org/software/bash/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=dark"><img src="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=light" alt="Bash command wrapper"></picture></a>
-    <a href="https://docs.github.com/en/rest"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/GitHub%20API.svg?variant=outline&amp;theme=white&amp;logo=github&amp;logoColor=ffffff&amp;mode=dark"><img src="https://shieldcn.dev/badge/GitHub%20API.svg?variant=outline&amp;theme=purple&amp;logo=github&amp;logoColor=ffffff&amp;mode=light" alt="GitHub API uploads"></picture></a>
+    <a href="https://www.python.org/downloads/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Python%203.svg?variant=outline&amp;theme=purple&amp;logo=python&amp;logoColor=ffffff&amp;mode=auto"><img src="https://shieldcn.dev/badge/Python%203.svg?variant=outline&amp;theme=purple&amp;logo=python&amp;logoColor=ffffff&amp;mode=auto" alt="Python 3 runtime"></picture></a>
+    <a href="https://docs.github.com/en/rest"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/GitHub%20API.svg?variant=outline&amp;theme=purple&amp;logo=github&amp;logoColor=ffffff&amp;mode=auto"><img src="https://shieldcn.dev/badge/GitHub%20API.svg?variant=outline&amp;theme=purple&amp;logo=github&amp;logoColor=ffffff&amp;mode=auto" alt="GitHub API uploads"></picture></a>
+<a href="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/gpl/LICENSE"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/GPL%20License-purple.svg?variant=outline&amp;logo=ri%3ATbBrandOpenSource&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/badge/GPL%20License-purple.svg?variant=outline&amp;logo=ri%3ATbBrandOpenSource&amp;mode=light"></picture></a>
+        <a href="https://www.gnu.org/software/bash/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=auto"><img src="https://shieldcn.dev/badge/Bash.svg?variant=outline&amp;theme=purple&amp;logo=gnubash&amp;logoColor=ffffff&amp;mode=auto" alt="Bash command wrapper"></picture></a>
   </p>
   <p align="center"><strong>Upload files to GitHub and copy shareable Markdown, HTML, and raw links.</strong></p>
   <p align="center">
@@ -43,7 +44,7 @@ execution or remote browsing, not for local planning.
 
 <a name="usage"></a>
 
-## <img src="https://api.iconify.design/lucide/terminal.svg?color=%239d67c4" height="22" alt=""> Usage
+## <img src="https://api.iconify.design/lucide/terminal.svg?color=%23b030f0" height="22" alt=""> Usage
 
 ```bash
 # Plan local files; nothing is uploaded
@@ -87,7 +88,7 @@ suggested filename separately from temporary storage. Sensitive files are flagge
 Run `./src/bin/gupload --help` for the full interface.
 
 <details>
-<summary><strong>macOS, Linux, and helper scripts</strong></summary>
+<summary><strong>Helpers</strong></summary>
 
 **macOS:** `./src/bin/gupload --dialog` opens file/URL selection, naming, destination, and
 preview dialogs. Canceling or viewing a plan never publishes.
@@ -146,7 +147,7 @@ Uploads write to the remote repository, not your local checkout, and do not obey
 
 <a name="configuration"></a>
 
-## <img src="https://api.iconify.design/lucide/sliders-horizontal.svg?color=%239d67c4" height="22" alt=""> Configuration
+## <img src="https://api.iconify.design/lucide/sliders-horizontal.svg?color=%23b030f0" height="22" alt=""> Configuration
 
 Config: `$XDG_CONFIG_HOME/gupload/config.json`, defaulting to `~/.config/gupload/config.json`.
 Start from [`src/data/config.example.json`](src/data/config.example.json).
@@ -167,7 +168,7 @@ Start from [`src/data/config.example.json`](src/data/config.example.json).
 | `release_draft` | Defaults to `true`; draft assets are not public downloads. |
 
 <details>
-<summary><strong>Authentication precedence</strong></summary>
+<summary><strong>Authentication</strong></summary>
 
 
 Execution checks token identity and repository visibility before changing remote state.
@@ -210,7 +211,7 @@ gupload/
 
 <a name="development"></a>
 
-## <img src="https://api.iconify.design/lucide/wrench.svg?color=%239d67c4" height="22" alt=""> Development
+## <img src="https://api.iconify.design/lucide/wrench.svg?color=%23b030f0" height="22" alt=""> Development
 
 ```bash
 python3 -m venv .venv
@@ -225,14 +226,16 @@ platform setup, publication safeguards, and menu workflows.
 
 <a name="license"></a>
 
-## <a href="https://www.wtfpl.net/"><img src="https://spoo.me/yvF6387" height="20" alt="WTFPL"></a> License
+## <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/open-source/free-works-logo.svg" height="20"></a> License
 
 <div align="center">
 
-[**𝗗𝗢 𝗪𝗛𝗔𝗧 𝗧𝗛𝗘 𝗙𝗨𝗖𝗞 𝗬𝗢𝗨 𝗪𝗔𝗡𝗧 𝗧𝗢 𝗣𝗨𝗕𝗟𝗜𝗖 𝗟𝗜𝗖𝗘𝗡𝗦𝗘**](https://www.wtfpl.net/)
+[**𝗚𝗡𝗨 𝗚𝗣𝗟 𝗟𝗜𝗖𝗘𝗡𝗦𝗘**](https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/gpl/LICENSE)
 
-<a href="https://deathrashed.short.gy/wEOeRM"><img src="https://deathrashed.short.gy/mkqomG" alt="WTFPL Badge" width="180"></a>
+<a href="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/gpl/LICENSE"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/gpl/gpl-license-badge.svg" alt="GPL Badge" width="180"></a>
 
 **𝗖𝗢𝗣𝗬𝗥𝗜𝗚𝗛𝗧 © 𝟮𝟬𝟮𝟲 𝗗𝗘𝗔𝗧𝗛𝗥𝗔𝗦𝗛𝗘𝗗**
 
 </div>
+
+
