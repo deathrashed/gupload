@@ -1,4 +1,4 @@
-## <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/open-source/open-source-logo.svg" height="20"></a> License
+## <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/common/open-source-logo.svg" height="20" alt="Apache-2.0 license website"></a> License
 
 <div align="center">
 

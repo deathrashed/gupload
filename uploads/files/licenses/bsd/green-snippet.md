@@ -1,4 +1,4 @@
-## <a href="https://opensource.org/license/bsd-2-clause"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/open-source/open-source-logo.svg" height="20"></a> License
+## <a href="https://opensource.org/license/bsd-2-clause"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/common/open-source-logo.svg" height="20" alt="BSD-2-Clause license website"></a> License
 
 <div align="center">
 

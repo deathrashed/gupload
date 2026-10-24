@@ -924,6 +924,14 @@ def get_presets(cfg):
         "wtfpl": {"path": "files/licenses/wtfpl"},
         "mit": {"path": "files/licenses/mit"},
         "gpl": {"path": "files/licenses/gpl"},
+        "lgpl": {"path": "files/licenses/lgpl"},
+        "apache": {"path": "files/licenses/apache"},
+        "bsd": {"path": "files/licenses/bsd"},
+        "unlicense": {"path": "files/licenses/unlicense"},
+        "cc0": {"path": "files/licenses/cc0"},
+        "cc-by": {"path": "files/licenses/cc-by"},
+        "cc-by-sa": {"path": "files/licenses/cc-by-sa"},
+        "license-common": {"path": "files/licenses/common"},
         "docker-icons": {"path": "icons/docker"},
     }
     presets.update(cfg.get("presets", {}))

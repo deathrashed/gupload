@@ -1,4 +1,4 @@
-## <a href="https://opensource.org/license/MIT"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/mit/mit-license-logo1.svg" height="20"></a> License
+## <a href="https://opensource.org/license/MIT"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/mit/mit-license-logo1.svg" height="20" alt="MIT license website"></a> License
 
 <div align="center">
 

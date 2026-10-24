@@ -1,0 +1,15 @@
+{
+  "spdx_id": "MIT",
+  "name": "MIT License",
+  "category": "permissive",
+  "osi_approved": true,
+  "fsf_libre": true,
+  "deprecated": false,
+  "is_exception": false,
+  "urls": [
+    "https://opensource.org/license/MIT",
+    "https://gitlab.freedesktop.org/xorg/xserver/-/blob/dd5c2595a42d3ff0c4f18d9b53d1f6c3fd934fd4/COPYING#L365-389"
+  ],
+  "spdx_page": "https://spdx.org/licenses/MIT.html",
+  "description": "A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code."
+}

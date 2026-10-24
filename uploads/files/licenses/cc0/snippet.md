@@ -1,4 +1,4 @@
-## <a href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/cc0/cc0-license-logo.svg" height="20"></a> License
+## <a href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/cc0/cc0-license-logo.svg" height="20" alt="CC0-1.0 license website"></a> License
 
 <div align="center">
 

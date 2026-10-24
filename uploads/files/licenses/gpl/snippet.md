@@ -1,4 +1,4 @@
-## <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/gpl/gpl-license-logo0.svg" height="20"></a> License
+## <a href="https://www.gnu.org/licenses/gpl-3.0.html"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/gpl/gpl-license-logo0.svg" height="20" alt="GPL-3.0-or-later license website"></a> License
 
 <div align="center">
 

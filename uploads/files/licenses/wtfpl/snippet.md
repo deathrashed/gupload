@@ -1,4 +1,4 @@
-## <a href="https://www.wtfpl.net/"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/wtfpl/wtfpl-logo-white.svg" height="20"></a> License
+## <a href="https://www.wtfpl.net/"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/wtfpl/wtfpl-logo-white.svg" height="20" alt="WTFPL license website"></a> License
 
 <div align="center">
 

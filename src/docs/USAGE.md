@@ -117,7 +117,8 @@ and audio under `uploads/audio/<Artist>/`. `use_image_subfolders` controls cover
 artist organization is not selected.
 
 Filename-based license detection recognizes names such as `LICENSE` and `COPYING`; it does not infer
-MIT/WTFPL/GPL from file contents. Use a preset to keep license text and artwork together:
+a specific license from file contents. Use a license preset (`gpl`, `lgpl`, `mit`, `bsd`, `apache`, `wtfpl`,
+`unlicense`, `cc0`, `cc-by`, `cc-by-sa`, or `license-common` for shared art) to keep license text and artwork together:
 
 ```bash
 ./src/bin/gupload logo.svg --preset wtfpl

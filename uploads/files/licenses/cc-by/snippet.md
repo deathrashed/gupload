@@ -1,4 +1,4 @@
-## <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/cc-by/cc-by-license-logo.svg" height="20"></a> License
+## <a href="https://creativecommons.org/licenses/by/4.0/"><img src="https://raw.githubusercontent.com/deathrashed/gupload/refs/heads/main/uploads/files/licenses/cc-by/cc-by-license-logo.svg" height="20" alt="CC-BY-4.0 license website"></a> License
 
 <div align="center">
 
