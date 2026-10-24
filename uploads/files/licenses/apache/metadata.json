@@ -1,0 +1,15 @@
+{
+  "spdx_id": "Apache-2.0",
+  "name": "Apache License 2.0",
+  "category": "permissive",
+  "osi_approved": true,
+  "fsf_libre": true,
+  "deprecated": false,
+  "is_exception": false,
+  "urls": [
+    "https://www.apache.org/licenses/LICENSE-2.0",
+    "https://opensource.org/license/apache-2.0"
+  ],
+  "spdx_page": "https://spdx.org/licenses/Apache-2.0.html",
+  "description": "A permissive license whose main conditions require preservation of copyright and license notices. Contributors provide an express grant of patent rights. Licensed works, modifications, and larger works may be distributed under different terms and without source code."
+}
