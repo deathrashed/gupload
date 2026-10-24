@@ -1,0 +1,14 @@
+{
+  "spdx_id": "Unlicense",
+  "name": "The Unlicense",
+  "category": "public-domain",
+  "osi_approved": true,
+  "fsf_libre": true,
+  "deprecated": false,
+  "is_exception": false,
+  "urls": [
+    "https://unlicense.org/"
+  ],
+  "spdx_page": "https://spdx.org/licenses/Unlicense.html",
+  "description": "A license with no conditions whatsoever which dedicates works to the public domain. Unlicensed works, modifications, and larger works may be distributed under different terms and without source code."
+}

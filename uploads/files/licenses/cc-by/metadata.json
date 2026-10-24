@@ -1,0 +1,14 @@
+{
+  "spdx_id": "CC-BY-4.0",
+  "name": "Creative Commons Attribution 4.0 International",
+  "category": "creative-commons",
+  "osi_approved": false,
+  "fsf_libre": true,
+  "deprecated": false,
+  "is_exception": false,
+  "urls": [
+    "https://creativecommons.org/licenses/by/4.0/legalcode"
+  ],
+  "spdx_page": "https://spdx.org/licenses/CC-BY-4.0.html",
+  "description": "Permits almost any use subject to providing credit and license notice. Frequently used for media assets and educational materials. The most common license for Open Access scientific publications. Not recommended for software."
+}

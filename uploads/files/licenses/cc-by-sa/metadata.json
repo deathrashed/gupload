@@ -1,0 +1,14 @@
+{
+  "spdx_id": "CC-BY-SA-4.0",
+  "name": "Creative Commons Attribution Share Alike 4.0 International",
+  "category": "creative-commons",
+  "osi_approved": false,
+  "fsf_libre": true,
+  "deprecated": false,
+  "is_exception": false,
+  "urls": [
+    "https://creativecommons.org/licenses/by-sa/4.0/legalcode"
+  ],
+  "spdx_page": "https://spdx.org/licenses/CC-BY-SA-4.0.html",
+  "description": "Similar to <a href='/licenses/cc-by-4.0/'>CC-BY-4.0</a> but requires derivatives be distributed under the same or a similar, <a href=\"https://creativecommons.org/compatiblelicenses\">compatible</a> license. Frequently used for media assets and educational materials. A previous version is the default license for Wikipedia and other Wikimedia projects. Not recommended for software."
+}
