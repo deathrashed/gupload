@@ -1,0 +1,78 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+.pytest_cache/
+
+# Config (contains secrets)
+config.json
+~/.config/gupload/config.json
+*.log
+
+# Sensitive data
+.env
+.env.local
+*.key
+*.pem
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS custom folder icon files
+/Icon
+/Icon?
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Cursor IDE (editor-specific config)
+.cursor/
+.cursorignore
+.cursorindexingignore
+
+# SpecStory (AI documentation tool)
+.specstory/
+
+# Data
+data/logs/*.log
+
+<<<<<<< Updated upstream
+# Uploads folder (contains personal uploads, users can clone without it)
+# Files uploaded via API will still exist on GitHub but can be excluded from clone
+||||||| Stash base
+# uploads/ is the hosted asset tree, tracked in git ON PURPOSE:
+# raw.githubusercontent/jsdelivr URLs serve these files from the repo.
+# Only test uploads are ignored.
+=======
+# uploads/ is the hosted asset tree, tracked in git ON PURPOSE:
+# raw.githubusercontent/jsdelivr URLs serve these files from the repo.
+# Test uploads and obsolete duplicate license locations are ignored.
+>>>>>>> Stashed changes
+
+
+.claude-flow/
+.codegraph/
+ruvector.db
+
+# Agent plans/specs and instructions (local only)
+/plans/
+/.freebuff/
+/.github/workflows/
+docs/superpowers/
+CLAUDE.md
+uploads/test/
+
+# License assets belong in uploads/files/licenses/<license>/.
+/uploads/icons/wtfpl/
+/uploads/icons/licenses/
+/uploads/files/LICENSE
+/uploads/files/licenses/LICENSE
