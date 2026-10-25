@@ -8,7 +8,7 @@ if [[ ! -x "$GHU" ]]; then
     exit 1
 fi
 output="$("$GHU" --menu </dev/null)"
-if [[ "$output" != *"Gupload — offline-first uploader"* ]]; then
+if [[ "$output" != *"gupload  offline-first uploader for GitHub"* ]]; then
     echo "test-menu: terminal menu did not render its main screen." >&2
     exit 1
 fi

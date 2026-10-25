@@ -189,6 +189,23 @@ presets and saved templates; category and artist browsing; history search/export
 favorites; queue management; config, logs, stats, and help. Remote browsing is an explicit read-only
 action and is not performed just by opening the menu.
 
+On a terminal the menu takes over the page like a TUI (the alternate screen, so your scrollback is
+untouched when it quits): a header with the destination repository and the current section, a list
+you move through with `↑`/`↓` (or `j`/`k`) and pick with Enter or the row's number or letter, and a
+key-hint footer. `q`, `b`, `esc` or backspace go back. Picking an action opens its own framed page:
+what it prints and each answer stay in the frame, questions are typed on a framed input row (`←`/`→`,
+`Ctrl-U` clears, `↑`/`↓` or PgUp/PgDn scroll the page), and `esc` drops the action and returns to its
+menu. Short messages carry onto the next menu; longer output stays on the action page until a key
+is pressed. `Ctrl-C` leaves gupload. `GUPLOAD_FULLSCREEN=0`, or a non-terminal stdin or
+stdout, keeps the scrolling menu, where each line is typed and a mistyped key re-asks. Before anything uploads, the menu shows a plan card
+(destination, names, size, transport, collisions, warnings); type `json` at the EXECUTE prompt to see
+the full plan, `EXECUTE` to upload, or press Enter to cancel. Results come back as a card with each
+item's status and links (`GUPLOAD_MENU_JSON=1` also prints the raw JSON).
+
+Colour is truecolor purple/violet/magenta on gray and white, and switches off for `NO_COLOR`,
+`GUPLOAD_PLAIN=1`, `TERM=dumb` or a non-terminal stdout (`FORCE_COLOR=1` forces it on). Icons follow
+`GUPLOAD_ICONS=nerd|unicode|ascii`: Nerd Font by default, unicode without colour, ascii off UTF-8.
+
 Durable state is stored in the config directory's `data/` folder. Atomic serialized updates protect
 history, favorites, templates, and queues. History records source hashes, actual remote identity,
 destination, transport, status, errors, and successful links. Existing `recent.json` history remains
