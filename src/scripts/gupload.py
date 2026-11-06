@@ -1546,6 +1546,11 @@ def main(argv=None):
     parser.add_argument("--detect-category", action="store_true")
     parser._json_requested = "--json" in raw_argv
     args = parser.parse_args(raw_argv)
+    if (not args.files and not args.apply_plan and not args.retry_failed
+            and args.list_remote is None and args.path != PATH_PICK_SENTINEL
+            and not sys.stdin.isatty()):
+        # Piped paths/URLs work alongside flags too: `ls *.png | gupload --dry-run`.
+        args.files = [line.rstrip("\r\n") for line in sys.stdin if line.strip()]
     if args.files:
         from gupload_platform import normalize_inputs
         args.files = normalize_inputs(args.files)

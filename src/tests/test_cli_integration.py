@@ -72,10 +72,10 @@ def offline_cli(tmp_path):
         "COLUMNS": "200",
     })
 
-    def run(*args):
+    def run(*args, stdin=""):
         return subprocess.run(
             [str(LAUNCHER), *map(str, args)], cwd=tmp_path, env=env,
-            input="", text=True, capture_output=True, timeout=15,
+            input=stdin, text=True, capture_output=True, timeout=15,
         )
 
     yield run, config_dir, network_marker, tool_marker
@@ -100,6 +100,15 @@ def test_default_launcher_plans_without_credentials_or_state(offline_cli, tmp_pa
     assert item["transport"] == "contents"
     assert not (config_dir / "data").exists()
     assert "fixture-secret-must-not-enter-a-plan" not in result.stdout
+
+
+def test_piped_paths_work_alongside_flags(offline_cli, tmp_path):
+    run, _, _, _ = offline_cli
+    source = tmp_path / "photo.png"
+    source.write_bytes(b"piped")
+    result = run("--json", stdin=f"{source}\n")
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout)["items"][0]["remote_path"] == "uploads/images/photo.png"
 
 
 def test_saved_plan_refuses_changed_source_before_auth(offline_cli, tmp_path):
