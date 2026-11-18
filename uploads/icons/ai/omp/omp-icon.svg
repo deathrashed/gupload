@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 580" role="img" aria-labelledby="title">
+  <title id="title">Oh My Pi app icon</title>
+  <defs>
+    <linearGradient id="mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ed2caf"/>
+      <stop offset=".48" stop-color="#a832f4"/>
+      <stop offset="1" stop-color="#52d9df"/>
+    </linearGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <rect x="32" y="32" width="516" height="516" rx="94" fill="#0c0b12"/>
+  <path d="M123 151h319v54h-82v147c0 12 7 20 17 20s16-8 16-20v-10h49v10c0 40-29 71-67 71s-67-30-67-68V205h-69v213h-52V205h-64z" fill="url(#mark)"/>
+  <circle cx="442" cy="151" r="30" fill="#46dce5" opacity=".14" filter="url(#glow)"/>
+  <circle cx="442" cy="151" r="30" fill="#0c0b12"/>
+  <circle cx="442" cy="151" r="15" fill="#59dce4"/>
+</svg>
